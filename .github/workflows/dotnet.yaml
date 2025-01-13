@@ -1,0 +1,49 @@
+name: Publish Packages
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./src
+    
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 # Required for GitVersion
+        
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '9.0.x'
+        
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.10.2
+      with:
+        versionSpec: '5.x'
+        
+    - name: Determine Version
+      uses: gittools/actions/gitversion/execute@v0.10.2
+      id: gitversion
+
+    - name: NuGet Add Registry
+      run: dotnet nuget add source --username VoidForge --password ${{ secrets.NUGET_PUSH_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/VoidForgeOrg/index.json"
+
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --no-restore --configuration Release /p:Version=${{ steps.gitversion.outputs.semVer }}
+      
+    - name: Test
+      run: dotnet test --no-build --verbosity normal --configuration Release
+      
+    - name: Pack
+      run: dotnet pack --no-build --configuration Release /p:Version=${{ steps.gitversion.outputs.semVer }} --output .
+
+    - name: Push to GitHub Package Registry
+      run: dotnet nuget push "*.nupkg" --skip-duplicate --source "github"
