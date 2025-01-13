@@ -4,6 +4,11 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <IsPackable>true</IsPackable>
+        <PackageId>VoidForge.Libraries.PagedList</PackageId>
+        <Company>VoidForge</Company>
+        <PackageTags>VoidForge; VoidForge Library; Library</PackageTags>
+        <Description>This library contains implementation of our PagedList used for pagination</Description>
     </PropertyGroup>
 
     <ItemGroup>
