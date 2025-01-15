@@ -27,12 +27,12 @@ public abstract class PagingBase
         return (skip, take);
     }
     
-    public PagingMetadata GetPagingInfo(int totalCount) {
+    public PagingMetadata GetPagingMetadata(int totalCount) {
         return new PagingMetadata() {
-            Page = Page,
-            PageSize = PageSize,
+            Page = PageSize == 0 ? 0 : Page,
+            PageSize = Page == 0 ? totalCount : PageSize,
             TotalItemCount = totalCount,
-            TotalPages = (int) Math.Ceiling(totalCount / (double) PageSize)
+            TotalPages = PageSize == 0 ? 1 : (int) Math.Ceiling(totalCount / (double) PageSize)
         };
     }
 
