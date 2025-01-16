@@ -1,6 +1,6 @@
 ﻿namespace PagedList;
 
-public class Constants
+public class PagingConstants
 {
     public const string PaginationHeader = "X-Pagination";
 }
